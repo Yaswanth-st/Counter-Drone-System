@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter-Drone Tactical Command Interface</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="command-interface">
+        <!-- Top Header -->
+        <header class="header">
+            <div class="header-section">
+                <h1 class="system-title">COUNTER-DRONE COMMAND SYSTEM</h1>
+                <div class="system-status">
+                    <span class="status-indicator" id="systemStatus">OPERATIONAL</span>
+                    <span class="timestamp" id="timestamp"></span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="btn btn--primary" id="resetSystem">RESET SYSTEM</button>
+                <button class="btn btn--secondary" id="autoScanToggle">AUTO-SCAN: ON</button>
+            </div>
+        </header>
+
+        <!-- Main Interface Grid -->
+        <main class="main-interface">
+            <!-- Left Control Panel -->
+            <aside class="left-panel">
+                <div class="panel-section">
+                    <h3>RF JAMMING SYSTEM</h3>
+                    <div class="control-group">
+                        <label>Power Level</label>
+                        <input type="range" id="jammingPower" min="0" max="100" value="75">
+                        <span id="jammingPowerValue">75%</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Frequency Range</label>
+                        <select id="frequencyRange">
+                            <option value="2.4">2.4 GHz</option>
+                            <option value="5.8">5.8 GHz</option>
+                            <option value="433">433 MHz</option>
+                            <option value="915">915 MHz</option>
+                        </select>
+                    </div>
+                    <button class="btn btn--primary control-btn" id="activateJamming">ACTIVATE JAMMING</button>
+                </div>
+
+                <div class="panel-section">
+                    <h3>GNSS SPOOFING SYSTEM</h3>
+                    <div class="control-group">
+                        <label>Navigation System</label>
+                        <select id="navSystem">
+                            <option value="GPS">GPS</option>
+                            <option value="GLONASS">GLONASS</option>
+                            <option value="BeiDou">BeiDou</option>
+                            <option value="Galileo">Galileo</option>
+                            <option value="All Systems">All Systems</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Spoof Coordinates</label>
+                        <input type="text" id="spoofCoords" placeholder="39.7392° N, 104.9903° W" class="form-control">
+                    </div>
+                    <button class="btn btn--warning control-btn" id="activateSpoofing">ACTIVATE SPOOFING</button>
+                </div>
+
+                <div class="panel-section">
+                    <h3>TARGET ENGAGEMENT</h3>
+                    <div class="control-group">
+                        <label>Selected Target</label>
+                        <div id="selectedTarget" class="target-display">None Selected</div>
+                    </div>
+                    <div class="engagement-controls">
+                        <button class="btn btn--secondary control-btn" id="jamTarget">JAM TARGET</button>
+                        <button class="btn btn--warning control-btn" id="spoofTarget">SPOOF TARGET</button>
+                        <button class="btn btn--error control-btn" id="empStrike">EMP STRIKE</button>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>SYSTEM DIAGNOSTICS</h3>
+                    <div class="diagnostic-item">
+                        <span>Radar Status:</span>
+                        <span class="status-good" id="radarStatus">OPERATIONAL</span>
+                    </div>
+                    <div class="diagnostic-item">
+                        <span>Jamming Array:</span>
+                        <span class="status-good" id="jammingStatus">READY</span>
+                    </div>
+                    <div class="diagnostic-item">
+                        <span>GNSS Spoofer:</span>
+                        <span class="status-good" id="spoofingStatus">STANDBY</span>
+                    </div>
+                    <div class="diagnostic-item">
+                        <span>EMP System:</span>
+                        <span class="status-good" id="empStatus">ARMED</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Central Radar Display -->
+            <section class="radar-container">
+                <div class="radar-scope" id="radarScope">
+                    <div class="radar-layers">
+                        <div class="detection-layer"></div>
+                        <div class="disruption-layer"></div>
+                        <div class="spoofing-layer"></div>
+                        <div class="emp-layer"></div>
+                    </div>
+                    <div class="radar-sweep" id="radarSweep"></div>
+                    <div class="radar-center"></div>
+                    <div class="radar-grid">
+                        <div class="grid-line vertical"></div>
+                        <div class="grid-line horizontal"></div>
+                    </div>
+                    <div class="range-rings">
+                        <div class="range-ring" style="width: 160px; height: 160px;"></div>
+                        <div class="range-ring" style="width: 240px; height: 240px;"></div>
+                        <div class="range-ring" style="width: 400px; height: 400px;"></div>
+                        <div class="range-ring" style="width: 600px; height: 600px;"></div>
+                    </div>
+                    <div class="radar-labels">
+                        <div class="label north">N</div>
+                        <div class="label east">E</div>
+                        <div class="label south">S</div>
+                        <div class="label west">W</div>
+                    </div>
+                </div>
+                <div class="radar-legend">
+                    <div class="legend-item">
+                        <div class="legend-color detection"></div>
+                        <span>Detection (300m)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color disruption"></div>
+                        <span>Disruption (200m)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color spoofing"></div>
+                        <span>Spoofing (120m)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color emp"></div>
+                        <span>EMP (80m)</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Threat Panel -->
+            <aside class="right-panel">
+                <div class="panel-section">
+                    <h3>THREAT DETECTION</h3>
+                    <div class="threat-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Detected:</span>
+                            <span class="stat-value" id="detectedCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Jammed:</span>
+                            <span class="stat-value" id="jammedCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Spoofed:</span>
+                            <span class="stat-value" id="spoofedCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Destroyed:</span>
+                            <span class="stat-value" id="destroyedCount">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>ACTIVE THREATS</h3>
+                    <div class="threat-list" id="threatList">
+                        <div class="no-threats">No active threats detected</div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>MISSION STATUS</h3>
+                    <div class="mission-info">
+                        <div class="mission-item">
+                            <span>Threat Level:</span>
+                            <span class="status-low" id="threatLevel">LOW</span>
+                        </div>
+                        <div class="mission-item">
+                            <span>Engagement Mode:</span>
+                            <span id="engagementMode">DEFENSIVE</span>
+                        </div>
+                        <div class="mission-item">
+                            <span>Perimeter Status:</span>
+                            <span class="status-good" id="perimeterStatus">SECURE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>MANUAL CONTROLS</h3>
+                    <div class="manual-controls">
+                        <button class="btn btn--secondary control-btn" id="generateThreat">GENERATE THREAT</button>
+                        <button class="btn btn--warning control-btn" id="generateSwarm">GENERATE SWARM</button>
+                        <button class="btn btn--error control-btn" id="clearThreats">CLEAR ALL</button>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Bottom Control Panel -->
+        <footer class="bottom-panel">
+            <div class="environmental-section">
+                <h4>ENVIRONMENTAL DATA</h4>
+                <div class="env-data">
+                    <div class="env-item">
+                        <span>Altitude:</span>
+                        <span id="altitude">14,200 ft</span>
+                    </div>
+                    <div class="env-item">
+                        <span>Temperature:</span>
+                        <span id="temperature">-28°C</span>
+                    </div>
+                    <div class="env-item">
+                        <span>Wind Speed:</span>
+                        <span id="windSpeed">45 mph</span>
+                    </div>
+                    <div class="env-item">
+                        <span>Pressure:</span>
+                        <span id="pressure">0.58 atm</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="performance-section">
+                <h4>SYSTEM PERFORMANCE</h4>
+                <div class="perf-data">
+                    <div class="perf-item">
+                        <span>CPU Usage:</span>
+                        <div class="performance-bar">
+                            <div class="bar-fill" id="cpuUsage" style="width: 23%"></div>
+                        </div>
+                        <span>23%</span>
+                    </div>
+                    <div class="perf-item">
+                        <span>Memory:</span>
+                        <div class="performance-bar">
+                            <div class="bar-fill" id="memoryUsage" style="width: 67%"></div>
+                        </div>
+                        <span>67%</span>
+                    </div>
+                    <div class="perf-item">
+                        <span>Network:</span>
+                        <div class="performance-bar">
+                            <div class="bar-fill" id="networkUsage" style="width: 45%"></div>
+                        </div>
+                        <span>45%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="system-controls-section">
+                <h4>SYSTEM CONTROLS</h4>
+                <div class="system-buttons">
+                    <button class="btn btn--outline" id="calibrateRadar">CALIBRATE RADAR</button>
+                    <button class="btn btn--outline" id="testSystems">TEST SYSTEMS</button>
+                    <button class="btn btn--outline" id="emergencyShutdown">EMERGENCY SHUTDOWN</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
